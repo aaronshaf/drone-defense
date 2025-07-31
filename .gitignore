@@ -1,5 +1,9 @@
 # Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
 
+# Built files
+public/main.js
+public/main.js.map
+
 # Logs
 
 logs

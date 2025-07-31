@@ -2,14 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drone Defense</title>
     <style>
-        body, html { margin: 0; padding: 0; overflow: hidden; background: #000; }
-        canvas { display: block; margin: auto; }
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        canvas { 
+            display: block; 
+            border: 2px solid #333;
+        }
+        #loading {
+            position: absolute;
+            color: white;
+            font-family: monospace;
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
+    <div id="loading">Loading game...</div>
     <canvas id="game-canvas"></canvas>
-    <script type="module" src="../src/main.ts"></script>
+    <script type="module">
+        // Hide loading message when game starts
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+            }, 1000);
+        });
+        
+        // Log any module loading errors
+        window.addEventListener('error', (e) => {
+            console.error('Error loading game:', e);
+        });
+    </script>
+    <script type="module" src="./main.js"></script>
 </body>
 </html>
