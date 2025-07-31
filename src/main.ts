@@ -30,11 +30,13 @@ const main = Effect.gen(function* () {
   });
 });
 
-const MainLive = Layer.mergeAll(
+// InputLive depends on KeyboardLive and GamepadLive
+const MainLive = Layer.merge(
   RendererLive,
-  KeyboardLive,
-  GamepadLive,
-  InputLive
+  Layer.provide(
+    InputLive,
+    Layer.merge(KeyboardLive, GamepadLive)
+  )
 );
 
 // Run the game

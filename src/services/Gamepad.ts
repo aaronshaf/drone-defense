@@ -21,6 +21,7 @@ export const GamepadLive = Layer.effect(
   Effect.gen(function* () {
     // Track button states to detect press/release
     const previousButtons = new Map<number, boolean>();
+    let debugLogged = false;
 
     return GamepadService.of({
       getInputState: () =>
@@ -39,6 +40,17 @@ export const GamepadLive = Layer.effect(
             };
           }
 
+          // Debug log gamepad info once
+          if (!debugLogged && gamepad.connected) {
+            console.log("🎮 Gamepad connected:", gamepad.id);
+            console.log("Axes count:", gamepad.axes.length);
+            console.log("Buttons count:", gamepad.buttons.length);
+            debugLogged = true;
+          }
+
+          // Debug axes values for Switch controller
+          const axesDebug = gamepad.axes.map((v, i) => `${i}: ${v.toFixed(2)}`).join(", ");
+          
           // Standard gamepad mapping (Xbox/PlayStation style)
           // Left stick for movement
           const movement = {
@@ -46,25 +58,42 @@ export const GamepadLive = Layer.effect(
             y: applyDeadzone(gamepad.axes[1] || 0), // Left stick vertical
           };
 
+          // Log movement if non-zero (for debugging)
+          if (Math.abs(movement.x) > 0.1 || Math.abs(movement.y) > 0.1) {
+            console.log("Movement detected:", movement, "Raw axes:", axesDebug);
+          }
+
           // D-pad as alternative movement (buttons 12-15)
+          // Note: Switch Pro Controller might use different button indices
           if (gamepad.buttons[14]?.pressed) movement.x = -1; // D-pad left
           if (gamepad.buttons[15]?.pressed) movement.x = 1;  // D-pad right
           if (gamepad.buttons[12]?.pressed) movement.y = -1; // D-pad up
           if (gamepad.buttons[13]?.pressed) movement.y = 1;  // D-pad down
 
+          // Debug button presses
+          gamepad.buttons.forEach((button, index) => {
+            if (button.pressed && !previousButtons.get(index)) {
+              console.log(`Button ${index} pressed`);
+            }
+            previousButtons.set(index, button.pressed);
+          });
+
           // Button mapping:
-          // A/X button (0) or Right Trigger (7) = shoot
-          // B/Circle button (1) or Left Trigger (6) = jump
-          // X/Square button (2) = also shoot (alternative)
+          // Switch Pro Controller typically uses:
+          // Button 0 = B, Button 1 = A, Button 2 = Y, Button 3 = X
+          // Button 6 = L, Button 7 = R
           const buttons = {
             shoot: 
-              gamepad.buttons[0]?.pressed || // A/X button
-              gamepad.buttons[2]?.pressed || // X/Square button  
-              gamepad.buttons[7]?.pressed || // Right trigger
+              gamepad.buttons[1]?.pressed || // A button (Switch)
+              gamepad.buttons[0]?.pressed || // B button (Switch) / A (Xbox)
+              gamepad.buttons[7]?.pressed || // R button
+              gamepad.buttons[5]?.pressed || // ZR button (Switch)
               false,
             jump: 
-              gamepad.buttons[1]?.pressed || // B/Circle button
-              gamepad.buttons[6]?.pressed || // Left trigger
+              gamepad.buttons[2]?.pressed || // Y button (Switch)
+              gamepad.buttons[3]?.pressed || // X button (Switch)
+              gamepad.buttons[6]?.pressed || // L button
+              gamepad.buttons[4]?.pressed || // ZL button (Switch)
               false,
           };
 
