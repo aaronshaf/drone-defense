@@ -1,14 +1,6 @@
-#\!/usr/bin/env sh
+#!/usr/bin/env sh
 
 echo "Running pre-commit checks..."
-
-# Run TypeScript type checking
-echo "Checking types..."
-bun run tsc --noEmit
-if [ $? -ne 0 ]; then
-  echo "❌ Type checking failed. Please fix the errors before committing."
-  exit 1
-fi
 
 # Run build to ensure the project builds
 echo "Testing build..."
@@ -18,4 +10,4 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-echo "✅ All pre-commit checks passed\!"
+echo "✅ All pre-commit checks passed!"

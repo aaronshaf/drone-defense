@@ -5,7 +5,7 @@ export const createInitialGameState = (): GameState => ({
   player: {
     position: { x: 100, y: 300 },
     velocity: { x: 0, y: 0 },
-    size: { x: 32, y: 48 },
+    size: { x: 40, y: 32 }, // Updated size for drone size calculations
     health: 100,
   },
   drones: [],
@@ -22,6 +22,11 @@ export const createInitialGameState = (): GameState => ({
   playerShootingState: {
     canShoot: true,
     timeSinceLastShot: 0,
+  },
+  droneSpawning: {
+    nextSpawnTime: 3000, // First spawn after 3 seconds
+    formationCounter: 0,
+    activeFormations: [],
   },
 });
 
