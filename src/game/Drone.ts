@@ -6,7 +6,7 @@ let formationIdCounter = 0;
 
 // Scout Drone Constants
 const SCOUT_DRONE_CONFIG = {
-  size: { x: 24, y: 20 }, // 60% of player size (assuming player is 40x32)
+  size: { x: 24, y: 19 }, // 60% of player size (assuming player is 40x32)
   health: 1,
   speed: 150, // pixels per second
   shootCooldown: 1.5, // seconds

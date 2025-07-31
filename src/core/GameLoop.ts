@@ -122,14 +122,20 @@ export const updateGameState = (
   }
 
   // Update formations - mark complete formations
-  updatedFormations = updatedFormations.map(formation => ({
-    ...formation,
-    isComplete: checkFormationComplete(formation, collisionResult.drones),
-  }));
+  updatedFormations = updatedFormations.map(formation => {
+    const wasComplete = formation.isComplete;
+    const isNowComplete = checkFormationComplete(formation, collisionResult.drones);
+    
+    return {
+      ...formation,
+      isComplete: isNowComplete,
+      completedTime: !wasComplete && isNowComplete ? gameTimeMs : formation.completedTime,
+    };
+  });
 
   // Remove completed formations after a delay
   updatedFormations = updatedFormations.filter(formation => 
-    !formation.isComplete || gameTimeMs - (formation as any).completedTime < 1000
+    !formation.isComplete || !formation.completedTime || gameTimeMs - formation.completedTime < 1000
   );
 
   // Spawn new drone formations
@@ -233,6 +239,16 @@ export const renderGameState = (
       ctx.fillText(`Health: ${gameState.player.health}`, 10, 50);
       ctx.fillText(`Drones: ${gameState.drones.length}`, 10, 70);
       ctx.fillText(`Formations: ${gameState.droneSpawning.activeFormations.length}`, 10, 90);
+      
+      // Draw gamepad status
+      const gamepads = navigator.getGamepads();
+      if (gamepads[0]) {
+        ctx.fillStyle = "#00ff00";
+        ctx.fillText("🎮 Gamepad Connected", 10, 580);
+      } else {
+        ctx.fillStyle = "#888888";
+        ctx.fillText("🎮 No Gamepad (Use Keyboard)", 10, 580);
+      }
     });
   });
 

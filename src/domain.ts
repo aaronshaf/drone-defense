@@ -57,6 +57,7 @@ export interface DroneFormation {
   drones: Drone[];
   isComplete: boolean;
   bonusAwarded: boolean;
+  completedTime?: number;
 }
 
 export interface GameState {
